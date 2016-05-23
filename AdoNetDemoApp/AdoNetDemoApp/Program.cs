@@ -18,7 +18,7 @@ namespace AdoNetDemoApp
             using (var connection = new SqlConnection(cs))
             {
                 connection.Open();
-                var command = new SqlCommand("Insert into People values ('Vasyl', 'Gupalo',null,'10.25.2015','Student')", connection);
+                var command = new SqlCommand("Insert into People values ('Gupalo','Vasyl',null,'10.25.2015','Student')", connection);
                 command.CommandType = CommandType.Text;
                 command.ExecuteNonQuery();
 
