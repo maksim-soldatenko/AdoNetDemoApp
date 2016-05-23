@@ -35,6 +35,15 @@ namespace AdoNetDemoApp
                 connection.Close();
             }
 
+            Console.WriteLine("Make the same with DataSet? Y/N");
+            var ans = Console.ReadLine();
+            if (ans.Equals("Y", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var dataset = new DataSetOperations(cs);
+                dataset.InitDataSet();
+                dataset.MakeSomeChanges();
+            }
+
             Console.ReadKey();
         }
     }
