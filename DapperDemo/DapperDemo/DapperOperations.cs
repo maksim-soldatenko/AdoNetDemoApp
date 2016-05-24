@@ -43,6 +43,7 @@ namespace DapperDemo
         {
             ReadAll();
             ReadFiltered("Li");
+            ReadMultiple();
         }
 
         public void Update(string lastName)
@@ -105,6 +106,34 @@ namespace DapperDemo
                 {
                     Console.WriteLine(String.Format("{0} - {1} - {2}", student.Id, student.FirstMidName, student.LastName));
                 }
+            }
+        }
+
+        private void ReadMultiple()
+        {
+            var multiple = @"SELECT * FROM People WHERE Discriminator = 'Student'
+                            SELECT * FROM People WHERE Discriminator = 'Instructor'";
+
+            using (var connection = new SqlConnection(_cs))
+            {
+                using (var mq = connection.QueryMultiple(multiple))
+                {
+                    var students = mq.Read<Student>();
+                    var instructors = mq.Read();
+
+                    Console.WriteLine("Students: ");
+                    foreach (var student in students)
+                    {
+                        Console.WriteLine(String.Format("{0} - {1} - {2}", student.Id, student.FirstMidName, student.LastName));
+                    }
+
+                    Console.WriteLine("Instructors: ");
+                    foreach (var instructor in instructors)
+                    {
+                        Console.WriteLine(String.Format("{0} - {1} - {2}", instructor.Id, instructor.FirstMidName, instructor.LastName));
+                    }
+                }
+                
             }
         }
     }
