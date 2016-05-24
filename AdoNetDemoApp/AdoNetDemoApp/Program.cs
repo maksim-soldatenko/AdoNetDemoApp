@@ -22,18 +22,10 @@ namespace AdoNetDemoApp
                 command.CommandType = CommandType.Text;
                 command.ExecuteNonQuery();
 
-                command.CommandText = "Select * from People";
-
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        Console.WriteLine(String.Format("{0} - {1} - {2}", reader[0], reader[1], reader[2]));
-                    }
-                }
-
                 connection.Close();
             }
+
+            MultipleResultSet(cs);
 
             Console.WriteLine("Make the same with DataSet? Y/N");
             var ans = Console.ReadLine();
@@ -45,6 +37,33 @@ namespace AdoNetDemoApp
             }
 
             Console.ReadKey();
+        }
+
+        private static void MultipleResultSet(string cs)
+        {
+            var multiple = @"SELECT * FROM People WHERE Discriminator = 'Student'
+                            SELECT * FROM People WHERE Discriminator = 'Instructor'";
+            using (var connection = new SqlConnection(cs))
+            {
+                connection.Open();
+                var command = new SqlCommand(multiple, connection);
+                command.CommandType = CommandType.Text;
+                
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            Console.WriteLine(String.Format("{0} - {1} - {2} - {3}", reader[0], reader[1], reader[2], reader["Discriminator"]));
+                        }
+
+                        reader.NextResult();
+                    }
+                }
+
+                connection.Close();
+            }
         }
     }
 }
